@@ -68,7 +68,6 @@ def init_users_table():
     conn.close()
 
 
-
 def init_vehicle_dealership_table():
     with sqlite3.connect("dealership.db") as conn:
         conn.execute("CREATE TABLE IF NOT EXISTS Car_dealership (id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -261,6 +260,15 @@ def edit_car(vehicle_id):
                     response['message'] = "Updating  successfully"
                     response['status_code'] = 200
 
+            if incoming_data.get("price") is not None:
+                put_data["price"] = incoming_data.get("price")
+                with sqlite3.connect("dealership.db") as conn:
+                    cursor = conn.cursor()
+                    cursor.execute("UPDATE Car_dealership SET price=? WHERE id=?", (put_data["price"], vehicle_id))
+                    conn.commit()
+                    response['message'] = "Updating  successfully"
+                    response['status_code'] = 200
+
             if incoming_data.get('year') is not None:
                 put_data['year'] = incoming_data.get('year')
                 with sqlite3.connect('dealership.db') as conn:
@@ -268,7 +276,7 @@ def edit_car(vehicle_id):
                     cursor.execute('UPDATE Car_dealership SET year=? WHERE id=?', (put_data['year'], vehicle_id))
                     conn.commit()
                     response['message'] = "Updating Successfully"
-                return response
+                    return response
 
 
 if __name__ == '__main__':
